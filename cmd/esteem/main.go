@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"github.com/lastZu/Esteem/internal/app/clients/telegram"
 	"log"
 
 	"github.com/lastZu/Esteem/internal/app/utils"
@@ -13,6 +13,18 @@ import (
 var (
 	configPath string
 )
+
+const (
+	telegramBotHost = "api.telegram.org"
+)
+
+func init() {
+	flag.StringVar(
+		&configPath,
+		"config-path",
+		"configs/utils.toml",
+		"path to config file")
+}
 
 func main() {
 	flag.Parse()
@@ -29,17 +41,7 @@ func main() {
 	}
 
 	token := mustToken()
-
-	fmt.Println(engineer)
-	fmt.Println(token)
-}
-
-func init() {
-	flag.StringVar(
-		&configPath,
-		"config-path",
-		"configs/utils.toml",
-		"path to config file")
+	telegramClien := telegram.New(telegramBotHost, token)
 }
 
 func mustToken() string {
