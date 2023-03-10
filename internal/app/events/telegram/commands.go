@@ -1,6 +1,8 @@
 package telegram
 
 import (
+	"github.com/lastZu/Esteem/internal/app/storage"
+	"github.com/lastZu/Esteem/lib/e"
 	"net/url"
 	"strings"
 )
@@ -11,17 +13,11 @@ type data struct {
 	userName string
 }
 
-type command func(data2 data) error
-
-var (
-	commands = map[string]command{
-		"add": add,
-	}
+const (
+	RndCmd   = "/rnd"
+	HelpCmd  = "/help"
+	StartCmd = "/start"
 )
-
-func add(data2 data) error {
-
-}
 
 func (p *Processor) doCmd(text string, chatID int, userName string) error {
 	text = strings.TrimSpace(text)
@@ -29,8 +25,43 @@ func (p *Processor) doCmd(text string, chatID int, userName string) error {
 	// Log
 
 	if isAddCmd(text) {
-		err := commands[text](data{})
+
 	}
+
+	switch text {
+	case RndCmd:
+	case HelpCmd:
+	case StartCmd:
+	default:
+
+	}
+}
+
+func (p *Processor) savePage(pageURL string, chatID int, userName string) (err error) {
+	defer func() { err = e.WrapIfErr("can't do command: save page", err) }()
+
+	page := &storage.Page{
+		URL:      pageURL,
+		UserName: userName,
+	}
+
+	isExists, err := p.storage.IsExists(page)
+	if err != nil {
+		return err
+	}
+	if isExists != nil {
+		return p.client.SendMessage(chatID, msgAlreadyExists)
+	}
+
+	if err := p.storage.Save(page); err != nil {
+		return err
+	}
+
+	if err := p.client.SendMessage(chatID, msgSaved); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func isAddCmd(text string) bool {

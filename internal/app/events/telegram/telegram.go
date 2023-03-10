@@ -57,9 +57,12 @@ func (p *Processor) Process(event events.Event) error {
 		return e.Wrap("can't process message", ErrUnknownEventType)
 	}
 
-	p.processMessage(event)
-
-	return nil
+	switch event.Type {
+	case events.Message:
+		p.processMessage(event)
+	default:
+		return e.Wrap("can't process message", ErrUnknownEventType)
+	}
 }
 
 func (p *Processor) processMessage(event events.Event) error {
@@ -71,7 +74,7 @@ func (p *Processor) processMessage(event events.Event) error {
 	return nil
 }
 
-func processMessage(event events.Event) (Meta, error) {
+func meta(event events.Event) (Meta, error) {
 	result, ok := event.Meta.(Meta)
 	if !ok {
 		return Meta{}, e.Wrap("can't get meta", ErrUnknownMetaType)
