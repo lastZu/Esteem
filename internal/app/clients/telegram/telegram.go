@@ -2,12 +2,13 @@ package telegram
 
 import (
 	"encoding/json"
-	"github.com/lastZu/Esteem/lib/e"
 	"io"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
+
+	"github.com/lastZu/Esteem/lib/e"
 )
 
 type Client struct {
@@ -21,8 +22,8 @@ const (
 	sendMessageMethod = "sendMessage"
 )
 
-func New(host string, token string) Client {
-	return Client{
+func New(host string, token string) *Client {
+	return &Client{
 		host:     host,
 		basePath: newBasePath(token),
 		client:   http.Client{},

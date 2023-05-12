@@ -2,12 +2,12 @@ package main
 
 import (
 	"flag"
-	"github.com/lastZu/Esteem/internal/app/clients/telegram"
 	"log"
 
-	"github.com/lastZu/Esteem/internal/app/utils"
-
-	"github.com/BurntSushi/toml"
+	"github.com/lastZu/Esteem/internal/app/clients/telegram"
+	event_consumer "github.com/lastZu/Esteem/internal/app/consumer/event-consumer"
+	tEvent "github.com/lastZu/Esteem/internal/app/events/telegram"
+	"github.com/lastZu/Esteem/internal/app/storage/files"
 )
 
 var (
@@ -16,6 +16,8 @@ var (
 
 const (
 	telegramBotHost = "api.telegram.org"
+	storagePath     = "storage"
+	batchSize       = 100
 )
 
 func init() {
@@ -27,21 +29,17 @@ func init() {
 }
 
 func main() {
-	flag.Parse()
-
-	config := utils.NewConfig()
-	_, err := toml.DecodeFile(configPath, config)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	engineer := utils.New(config)
-	if err := engineer.Start(); err != nil {
-		log.Fatal(err)
-	}
-
 	token := mustToken()
 	telegramClien := telegram.New(telegramBotHost, token)
+
+	eventsProcessor := tEvent.New(telegramClien, files.New(storagePath))
+
+	log.Print("service started")
+
+	consumer := event_consumer.New(eventsProcessor, eventsProcessor, batchSize)
+	if err := consumer.Start(); err != nil {
+		log.Fatal("service is stoped", err)
+	}
 }
 
 func mustToken() string {
