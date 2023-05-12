@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"errors"
+
 	"github.com/lastZu/Esteem/internal/app/clients/telegram"
 	"github.com/lastZu/Esteem/internal/app/events"
 	"github.com/lastZu/Esteem/internal/app/storage"
@@ -59,16 +60,22 @@ func (p *Processor) Process(event events.Event) error {
 
 	switch event.Type {
 	case events.Message:
-		p.processMessage(event)
+		return p.processMessage(event)
 	default:
 		return e.Wrap("can't process message", ErrUnknownEventType)
 	}
 }
 
 func (p *Processor) processMessage(event events.Event) error {
+	errMessage := "can't process message"
+
 	meta, err := meta(event)
 	if err != nil {
-		return e.Wrap("can't process message", err)
+		return e.Wrap(errMessage, err)
+	}
+
+	if err := p.doCmd(event.Text, meta.ChatID, meta.UserName); err != nil {
+		return e.Wrap(errMessage, err)
 	}
 
 	return nil

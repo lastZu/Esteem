@@ -3,12 +3,13 @@ package files
 import (
 	"encoding/gob"
 	"errors"
-	"github.com/lastZu/Esteem/internal/app/storage"
-	"github.com/lastZu/Esteem/lib/e"
 	"math/rand"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/lastZu/Esteem/internal/app/storage"
+	"github.com/lastZu/Esteem/lib/e"
 )
 
 type Storage struct {
@@ -17,10 +18,6 @@ type Storage struct {
 
 const (
 	defaultPermission = 0774
-)
-
-var (
-	ErrNoSavedPages = errors.New("no saved pages")
 )
 
 func New(basePath string) Storage {
@@ -67,7 +64,7 @@ func (s Storage) PickRandom(userName string) (page *storage.Page, err error) {
 	}
 
 	if len(files) == 0 {
-		return nil, ErrNoSavedPages
+		return nil, storage.ErrNoSavedPages
 	}
 
 	rand.Seed(time.Now().UnixNano())

@@ -1,7 +1,8 @@
 package telegram
 
 const msgHelp = `To save the page, send link
-Send /rnd to get random page`
+Send /rnd to get random page
+At the end, page will be removed`
 
 const msgHello = "Hi, \n" + msgHelp
 
