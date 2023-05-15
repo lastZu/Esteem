@@ -42,7 +42,7 @@ func (c Consumer) Start() error {
 	}
 }
 
-func (c Consumer) handleEvents(events []events.Event) error {
+func (c *Consumer) handleEvents(events []events.Event) error {
 	for _, event := range events {
 		log.Printf("got new event: %s", event.Text)
 

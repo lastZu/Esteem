@@ -25,7 +25,8 @@ func init() {
 		&configPath,
 		"config-path",
 		"configs/utils.toml",
-		"path to config file")
+		"path to config file",
+	)
 }
 
 func main() {

@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"errors"
+	"log"
 	"net/url"
 	"strings"
 
@@ -24,20 +25,26 @@ const (
 func (p *Processor) doCmd(text string, chatID int, userName string) error {
 	text = strings.TrimSpace(text)
 
-	// Log
+	log.Printf("got new event: %s", text)
 
 	if isAddCmd(text) {
 		p.savePage(text, chatID, userName)
+		log.Printf("got new event: %v", isAddCmd(text))
+		return nil
 	}
 
 	switch text {
 	case RndCmd:
+		log.Printf("got new event: RND")
 		return p.sendRandom(chatID, userName)
 	case HelpCmd:
+		log.Printf("got new event: HELP")
 		return p.sendHelp(chatID)
 	case StartCmd:
+		log.Printf("got new event: START")
 		return p.sendHello(chatID)
 	default:
+		log.Printf("got new event: DEF")
 		return p.client.SendMessage(chatID, msgUnknownCommand)
 	}
 }

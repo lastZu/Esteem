@@ -50,7 +50,7 @@ func (client *Client) Updates(offset int, limit int) ([]Update, error) {
 
 func (client *Client) SendMessage(chatID int, text string) error {
 	query := url.Values{}
-	query.Add("chatID", strconv.Itoa(chatID))
+	query.Add("chat_id", strconv.Itoa(chatID))
 	query.Add("text", text)
 
 	_, err := client.doRequest(sendMessageMethod, query)
@@ -82,6 +82,7 @@ func (client *Client) doRequest(method string, query url.Values) (data []byte, e
 	request.URL.RawQuery = query.Encode()
 
 	response, err := client.client.Do(request)
+
 	if err != nil {
 		return nil, err
 	}
